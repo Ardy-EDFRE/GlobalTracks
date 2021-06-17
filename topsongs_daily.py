@@ -1,35 +1,46 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
+import undetected_chromedriver.v2 as uc
 import time
 import shutil
 import glob
-import os
+from pathlib import Path
+import os, os.path
 
 
 def DataPull(path):
-    # instantiate a chrome options object so you can set the size and headless preference
-    # some of these chrome options might be uncessary but I just used a boilerplate
-    chrome_options = Options()
-    chrome_options.add_argument('--window-size=200x200')
-    chrome_options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+    options = uc.ChromeOptions()
+    # options.headless=True
+    # options.add_argument('--headless')
+    driver = uc.Chrome(options=options)
     
-    # initialize driver object and change the <path_to_chrome_driver> depending on your directory where your chromedriver should be
-    driver = webdriver.Chrome(options=chrome_options, executable_path="D:\Diddly\Python\chromedriver.exe")
-    
+    final_directory = path + '/TestData'
+
+    p = {'download.default_directory':final_directory}
+
+    final_directory = os.path.join(path, r'TestData')
+    print(f'Made {final_directory} folder.')
+    if not os.path.exists(final_directory):
+        os.makedirs(final_directory)
+
     countries = (
-    "ad","ar","au","at","be",
-    "bo","br","bg","ca","cl",
-    "co","cr","cy","cz","dk",
-    "do","ec","sv","ee","fi",
-    "fr","de","gr","gt","hn",
-    "hk","hu","id","is","ie","it",
-    "jp","lv","li","lt","lu","my",
-    "mt","mx","mc","nl","nz",
-    "ni","no","pa","py","pe",
-    "ph","pl","pt","es","sg",
-    "sk","se","ch","tw","tr",
-    "gb","us","uy")
+    "fr","de","gr",
+    "jp","us")
+    
+    # countries = (
+    # "ad","ar","au","at","be",
+    # "bo","br","bg","ca","cl",
+    # "co","cr","cy","cz","dk",
+    # "do","ec","sv","ee","fi",
+    # "fr","de","gr","gt","hn",
+    # "hk","hu","id","is","ie","it",
+    # "jp","lv","li","lt","lu","my",
+    # "mt","mx","mc","nl","nz",
+    # "ni","no","pa","py","pe",
+    # "ph","pl","pt","es","sg",
+    # "sk","se","ch","tw","tr",
+    # "gb","us","uy")
     
   #   all_markets = {
   #   "AD": "Andorra","AR": "Argentina","AU": "Australia",
@@ -116,16 +127,21 @@ def DataPull(path):
         time.sleep(5)
         
         timestr = time.strftime("%Y%m%d")
-        os.chdir(r"C:\Users\ardyb\Downloads")
-        destination_folder = "D:\Diddly\Python\Stream\Data"
+
+        downloads_path = str(Path.home() / "Downloads")
+        os.chdir(downloads_path)
         
         for file in glob.glob("*daily-latest.csv"):
-            shutil.move(file, destination_folder)
+            shutil.move(file, final_directory)
+
+        print(f'Moved {file} Files.')
         
         for file in glob.glob("*weekly-latest.csv"):
-            shutil.move(file, destination_folder)
+            shutil.move(file, final_directory)
+
+        print(f'Moved {file} Files.')
         
-        os.chdir(destination_folder)
+        os.chdir(final_directory)
         os.rename('regional-{}-daily-latest.csv'.format(country), "{}_top200_daily_{}.csv".format(country, timestr))
         os.rename('regional-{}-weekly-latest.csv'.format(country), "{}_top_200_weekly_{}.csv".format(country, timestr))
         

@@ -17,12 +17,11 @@ auth_manager = SpotifyClientCredentials()
 sp = spotipy.Spotify(auth_manager=auth_manager)
 translator = Translator()
 
-def SongRankings(path):
+def SongRankings(data_path):
     timestr = time.strftime("%Y%m%d")
     
-    destination_folder = "D:\Diddly\Python\Stream\Data"
-    daily = glob.glob(destination_folder + "/*daily_{}.csv".format(timestr)) # Include slash or it will search in the wrong directory!!
-    weekly = glob.glob(destination_folder + "/*weekly_{}.csv".format(timestr)) # Include slash or it will search in the wrong directory!!
+    daily = glob.glob(data_path + "/*daily_{}.csv".format(timestr)) # Include slash or it will search in the wrong directory!!
+    weekly = glob.glob(data_path + "/*weekly_{}.csv".format(timestr)) # Include slash or it will search in the wrong directory!!
         
     
     for country_daily in daily:
